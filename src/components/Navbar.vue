@@ -6,33 +6,27 @@
     <div class="flex-none">
       <ul class="menu menu-horizontal">
         <li class="mx-1 border-2 border-transparent hover:border-2 rounded-md hover:border-neutral-content">
-          <a>Marcas</a></li>
-        <li class="mx-1 border-2 border-transparent hover:border-2 rounded-md hover:border-neutral-content"><a>Mais
-            vendidos</a></li>
-        <li class="mx-1 border-2 border-transparent hover:border-2 rounded-md hover:border-neutral-content"><a>Novas
-            coleções</a></li>
+          <a @click="listarCalcados()">Calçados</a></li>
         <li class="mx-1 border-2 border-transparent hover:border-2 rounded-md hover:border-neutral-content">
-          <a>Contato</a></li>
+          <a @click="listarEstoque()">Estoque</a></li>
       </ul>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
-const user = ref(null)
+const router = useRouter()
 
-onMounted(() => {
-  const stored = localStorage.getItem('user')
-  if (stored) user.value = JSON.parse(stored)
-})
-
-function logout() {
-  localStorage.removeItem('accessToken')
-  localStorage.removeItem('refreshToken')
-  localStorage.removeItem('user')
-  user.value = null
-  window.location.href = '/login'
+function listarCalcados() {
+  router.push('/lista/calcados')
+  console.log('Listar calçados')
 }
+
+function listarEstoque() {
+
+}
+
+
 </script>
