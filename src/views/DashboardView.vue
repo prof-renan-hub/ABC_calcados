@@ -1,26 +1,12 @@
 <template>
   <div class="p-4">
-    <ProductList />
+    <h1>Dashboard</h1>
   </div>
 </template>
 
 <!-- <script setup>
 import { ref } from 'vue'
-import api from '../api/http'
-
-const msg = ref('')
-
-const callProtected = async () => {
-  const { data } = await api.get('/protected')
-  msg.value = data.message
-}
-</script> -->
-
-
-<script setup>
-import { ref } from 'vue'
 import axios from 'axios'
-import ProductList from '../components/ProductList.vue'
 import { Plus } from 'lucide-vue-next';
 
 const msg = ref('')
@@ -36,4 +22,4 @@ async function callProtected() {
     msg.value = e?.response?.data?.message || 'Erro na chamada'
   }
 }
-</script>
+</script> -->
