@@ -40,7 +40,8 @@
                     </select>
 
                     <label class="label">Descrição</label>
-                    <input type="text" v-model="descricao" class="input input-success w-full" placeholder="Calçado..." />
+                    <input type="text" v-model="descricao" class="input input-success w-full"
+                        placeholder="Calçado..." />
                 </div>
 
                 <div class="columns-3 mb-4">
@@ -57,7 +58,8 @@
                     <button class="btn btn-warning text-amber-50 mx-2" @click="cancelar()">
                         Cancelar
                     </button>
-                    <button class="btn btn-success text-amber-50" @click="salvar()" :disabled="!tipo || !categoria || !marca || !descricao || !tamanho || !cor || !preco">
+                    <button class="btn btn-success text-amber-50" @click="salvar()"
+                        :disabled="!tipo || !categoria || !marca || !descricao || !tamanho || !cor || !preco">
                         Salvar
                     </button>
                 </div>
@@ -68,8 +70,9 @@
 
 
 <script setup>
+import axios from 'axios';
 import { CircleX } from 'lucide-vue-next';
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const tipo = ref('')
 const categoria = ref('')
@@ -78,6 +81,39 @@ const descricao = ref('')
 const tamanho = ref('')
 const cor = ref('')
 const preco = ref('')
+
+const tipos = ref(null)
+const categorias = ref(null)
+const marcas = ref(null)
+const loading = ref(false)
+const error = ref(null)
+
+onMounted(
+    async function buscarDados() {
+        loading.value = true
+        error.value = null
+
+        try {
+            // Dispara as 3 requisições GET em paralelo
+            const [res1, res2, res3] = await Promise.all([
+                axios.get('http://localhost:5000/api/tipos'),
+                axios.get('http://localhost:5000/api/categorias'),
+                axios.get('http://localhost:5000/api/marcas')
+            ])
+
+            // Atribui as respostas
+            tipos.value = res1.data
+            categorias.value = res2.data
+            marcas.value = res3.data
+            console.log(tipos.value, categorias.value, marcas.value)
+        } catch (err) {
+            error.value = 'Erro ao carregar dados'
+            console.error(err)
+        } finally {
+            loading.value = false
+        }
+    }
+)
 
 
 
