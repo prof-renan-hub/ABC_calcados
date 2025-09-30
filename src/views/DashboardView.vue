@@ -1,7 +1,12 @@
+<script setup lang="ts">
+import Navbar from "../components/Navbar.vue";
+</script>
+
 <template>
-  <div class="p-4">
-    <h1>Dashboard</h1>
-  </div>
+    <Navbar />
+    <div class="p-4">
+        <h1>Dashboard</h1>
+    </div>
 </template>
 
 <!-- <script setup>
