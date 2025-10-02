@@ -45,13 +45,17 @@
             <button class="btn btn-square btn-ghost">
                 <Pencil class="text-yellow-500" />
             </button>
-            <button class="btn btn-square btn-ghost">
+            <button class="btn btn-square btn-ghost" @click="excluirCalcado(calcado)">
                 <Trash2 class="text-red-500" />
             </button>
         </li>
     </ul>
     <CreateProductView />
     <Loading />
+    <DeleteProductView 
+    ref="modalDeleteRef" 
+    :calcado="calcadoSelecionado"
+    @apagado="calcadoApagado()"/>
 </template>
 
 <script setup>
@@ -60,23 +64,36 @@ import { Bone, Pencil, Plus, Trash2 } from "lucide-vue-next";
 import { onMounted, ref } from "vue";
 import Loading from "./Loading.vue";
 import CreateProductView from "../views/CreateProductView.vue";
+import DeleteProductView from "../views/DeleteProductView.vue";
 
 const listaCalcados = ref([]);
 const loading = ref(false);
 
-onMounted(async function buscarListaCalcados() {
+const modalDeleteRef = ref(null)
+
+const calcadoSelecionado = ref(null)
+
+function excluirCalcado(calcado) {
+    calcadoSelecionado.value = calcado
+    modalDeleteRef.value?.abrirModal()
+}
+
+onMounted(
+    () => buscarListaCalcados()
+);
+
+async function buscarListaCalcados() {
     abrirLoading();
     const url = "http://localhost:5000/api/calcados";
     const resposta = await axios.get(url);
     if (resposta.status == 200) {
         listaCalcados.value = resposta.data;
         fecharLoading();
-        console.log(listaCalcados.value);
     } else {
         fecharLoading();
         console.log("Erro ao buscar dados");
     }
-});
+}
 
 function abrirLoading() {
     const exibirLoading = document.getElementById("loading_modal");
@@ -88,5 +105,9 @@ function fecharLoading() {
     const exibirLoading = document.getElementById("loading_modal");
     loading.value = false;
     exibirLoading.close();
+}
+
+function calcadoApagado() {
+    buscarListaCalcados()
 }
 </script>

@@ -11,7 +11,7 @@
                     </button>
                 </form>
             </div>
-            <h1>Apagar Produto</h1>
+            <h1>Editar Produto</h1>
         </div>
     </dialog>
 </template>
