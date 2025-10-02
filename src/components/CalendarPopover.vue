@@ -1,97 +1,94 @@
 <template>
-  <div>
-    <!-- Botão que abre o popover -->
-    <button 
-      popovertarget="cally-popover1" 
-      class="input input-border px-4 py-2 border rounded w-full text-left" 
-      id="cally1" 
-      style="anchor-name:--cally1"
-    >
-      {{ dataFormatada || 'Selecione uma data' }}
-    </button>
+    <div>
+        <button popovertarget="cally-popover1"
+            class="input input-border"
+            id="cally1"
+            style="anchor-name: --cally1">
+            {{ internalDate ? formatDateBR(internalDate) : "Selecionar data" }}
+        </button>
 
-    <!-- Popover -->
-    <div 
-      popover 
-      id="cally-popover1" 
-      ref="popoverRef"
-      class="dropdown bg-base-100 rounded-box shadow-lg p-4"
-      style="position-anchor:--cally1"
-    >
-      <calendar-date class="cally" @change="atualizarData">
-        <!-- Botão anterior -->
-        <svg 
-          aria-label="Previous" 
-          class="fill-current size-4" 
-          slot="previous" 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 24 24"
-        >
-          <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
-        </svg>
-
-        <!-- Botão próximo -->
-        <svg 
-          aria-label="Next" 
-          class="fill-current size-4" 
-          slot="next" 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 24 24"
-        >
-          <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
-        </svg>
-
-        <!-- Mês -->
-        <calendar-month></calendar-month>
-      </calendar-date>
-
-      <!-- Botão fechar -->
-      <button 
-        @click="fecharPopover" 
-        class="mt-3 bg-red-500 text-white px-3 py-1 rounded w-full"
-      >
-        Fechar
-      </button>
+        <div popover
+            id="cally-popover1"
+            class="dropdown bg-base-100 rounded-box shadow-lg p-2"
+            style="position-anchor: --cally1">
+            <div class="flex justify-end mt-2">
+                <button class="btn btn-square btn-ghost w-8 h-8"
+                    @click="closeCalendar()">
+                    <CircleX class="text-red-500 w-5 h-5" />
+                </button>
+            </div>
+            <calendar-date class="cally"
+                :min="today"
+                :value="internalDate"
+                @change="handleDateChange">
+                <svg aria-label="Previous"
+                    class="fill-current size-4"
+                    slot="previous"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24">
+                    <path d="M15.75 19.5 8.25 12l7.5-7.5"></path>
+                </svg>
+                <svg aria-label="Next"
+                    class="fill-current size-4"
+                    slot="next"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24">
+                    <path d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+                </svg>
+                <calendar-month></calendar-month>
+            </calendar-date>
+        </div>
     </div>
-  </div>
 </template>
 
-
-
-
-
-
-
 <script setup>
-import { ref, computed } from "vue";
+import { CircleX } from "lucide-vue-next";
+import { ref, onMounted, watch } from "vue";
 
-// Configuração do v-model
 const props = defineProps({
-    modelValue: {
-        type: String,
-        default: "",
-    },
+    modelValue: { type: String, default: "" },
 });
 const emit = defineEmits(["update:modelValue"]);
 
-const popoverRef = ref(null);
+const today = ref("");
+const internalDate = ref(props.modelValue);
 
-// Computed para exibir data no formato brasileiro
-const dataFormatada = computed(() => {
-    if (!props.modelValue) return "";
-    const data = new Date(props.modelValue);
-    return data.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+// ao montar, calcula a data de hoje no formato YYYY-MM-DD
+onMounted(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    today.value = `${year}-${month}-${day}`;
 });
 
-// Atualiza valor selecionado
-function atualizarData(event) {
-    const valor = event.target.value;
-    emit("update:modelValue", valor);
-    fecharPopover();
+// mantém interno sincronizado com modelValue externo
+watch(
+    () => props.modelValue,
+    (newVal) => {
+        internalDate.value = newVal;
+    }
+);
+
+function formatDateBR(dateStr) {
+    if (!dateStr) return "";
+    const [year, month, day] = dateStr.split("-");
+    return `${day}/${month}/${year}`;
 }
 
-// Fecha manualmente
-function fecharPopover() {
-    popoverRef.value?.hidePopover?.();
+function handleDateChange(event) {
+    const value = event.target.value;
+    if (value < today.value) {
+        alert("Não é permitido selecionar uma data anterior a hoje.");
+        return;
+    }
+    internalDate.value = value;
+    emit("update:modelValue", value);
+    closeCalendar();
+}
+
+function closeCalendar() {
+    const popover = document.getElementById("cally-popover1");
+    popover?.hidePopover();
 }
 </script>
