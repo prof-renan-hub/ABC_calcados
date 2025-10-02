@@ -45,17 +45,22 @@
             <button class="btn btn-square btn-ghost">
                 <Pencil class="text-yellow-500" />
             </button>
-            <button class="btn btn-square btn-ghost" @click="excluirCalcado(calcado)">
+            <button
+                class="btn btn-square btn-ghost"
+                @click="excluirCalcado(calcado)"
+            >
                 <Trash2 class="text-red-500" />
             </button>
         </li>
     </ul>
+
     <CreateProductView />
     <Loading />
-    <DeleteProductView 
-    ref="modalDeleteRef" 
-    :calcado="calcadoSelecionado"
-    @apagado="calcadoApagado()"/>
+    <DeleteProductView
+        ref="modalDeleteRef"
+        :calcado="calcadoSelecionado"
+        @apagado="calcadoApagado()"
+    />
 </template>
 
 <script setup>
@@ -69,18 +74,16 @@ import DeleteProductView from "../views/DeleteProductView.vue";
 const listaCalcados = ref([]);
 const loading = ref(false);
 
-const modalDeleteRef = ref(null)
+const modalDeleteRef = ref(null);
 
-const calcadoSelecionado = ref(null)
+const calcadoSelecionado = ref(null);
 
 function excluirCalcado(calcado) {
-    calcadoSelecionado.value = calcado
-    modalDeleteRef.value?.abrirModal()
+    calcadoSelecionado.value = calcado;
+    modalDeleteRef.value?.abrirModal();
 }
 
-onMounted(
-    () => buscarListaCalcados()
-);
+onMounted(() => buscarListaCalcados());
 
 async function buscarListaCalcados() {
     abrirLoading();
@@ -108,6 +111,6 @@ function fecharLoading() {
 }
 
 function calcadoApagado() {
-    buscarListaCalcados()
+    buscarListaCalcados();
 }
 </script>

@@ -1,5 +1,9 @@
-<script setup lang="ts">
+<script setup>
+import CalendarPopover from "../components/CalendarPopover.vue";
 import Navbar from "../components/Navbar.vue";
+import { ref } from "vue";
+
+const data = ref('')
 </script>
 
 <template>
@@ -7,6 +11,13 @@ import Navbar from "../components/Navbar.vue";
     <div class="p-4">
         <h1>Dashboard</h1>
     </div>
+    <div class="p-6 space-y-4">
+    <h1 class="text-lg font-bold">Exemplo com CalendarPopover</h1>
+
+    <CalendarPopover v-model="data" />
+
+    <p class="mt-4">📅 Data selecionada: {{ data }}</p>
+  </div>
 </template>
 
 <!-- <script setup>
